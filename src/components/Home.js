@@ -15,6 +15,9 @@ const Home = () => {
     },
   });
   const [searchInput, setSearchInput] = useState('');
+  const [editableIndex, setEditableIndex] = useState('');
+  const [modal, setModal] = useState(false);
+  const [modalInputs, setModalInputs] = useState({});
   const tableRef = useRef(null);
 
   // search input handler
@@ -107,6 +110,34 @@ const Home = () => {
     setData(sortedData);
   };
 
+  const editEmployeeHandler = (item, index) => {
+    setModal(true);
+    setModalInputs(item);
+    setEditableIndex(index);
+  };
+
+  // submit updated form
+  const submitForm = () => {
+    const id = modalInputs?.id;
+    let duplicatedArray = [...data];
+
+    const indexToUpdate = duplicatedArray.findIndex((item) => item.id === id);
+
+    if (indexToUpdate !== -1) {
+      const updatedArray = [
+        ...duplicatedArray.slice(0, indexToUpdate),
+        modalInputs,
+        ...duplicatedArray.slice(indexToUpdate + 1),
+      ];
+      console.log(updatedArray);
+
+      setData(updatedArray);
+
+      // close modal after updating
+      setModal(false);
+    }
+  };
+
   // useEffect for search input change
   useEffect(() => {
     searchInputHandler();
@@ -157,11 +188,18 @@ const Home = () => {
               filteredData={filteredData}
               searchInput={searchInput}
               sortTable={sortTable}
+              editEmployeeHandler={editEmployeeHandler}
               removeEmployeeHandler={removeEmployeeHandler}
               tableInputs={tableInputs}
+              editableIndex={editableIndex}
               addEmployeeHandler={addEmployeeHandler}
               setTableInputs={setTableInputs}
               tableRef={tableRef}
+              modalInputs={modalInputs}
+              setModalInputs={setModalInputs}
+              modal={modal}
+              setModal={setModal}
+              submitForm={submitForm}
             />
           </>
         )}
